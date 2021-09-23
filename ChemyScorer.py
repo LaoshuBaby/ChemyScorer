@@ -18,7 +18,14 @@ for i in range(num_stu):
     print("==请输入一个学生的学号和各题目成绩==")
     str_input = input()
     if str_input != "000000":
+        ## SPACE
+        str_input = str_input.replace(" ", ",")
+        ## CHINESE SYNTAX
         str_input = str_input.replace("，", ",")
+        str_input = str_input.replace("。", ".")
+        ## SPECIAL SYNTAX
+        str_input = str_input.replace(".,", ".5,")
+        str_input = str_input.replace("q", ".5")
         list_score = str_input.split(",")
         for j in range(len(list_score)):
             if j == 0:
