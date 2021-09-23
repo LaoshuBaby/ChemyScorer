@@ -8,13 +8,18 @@ list_global = []
 print("1.接下来输入时中间必须用英文逗号分割")
 print("2.题目分数必须严格按照顺序执行，没有分数的题目需要写0分")
 print("3.总题目数量可自动识别，保证执行过程中一致即可")
+print("4.如果输入到一半不想输入了，就输入000000打断程序")
+print("样例：  114,5,1,4,1,9,1,9,8,1,0")
+print("5.每次使用前输出文件不能在使用中")
 print("\n")
 
 ###### INPUT
 for i in range(num_stu):
     print("==请输入一个学生的学号和各题目成绩==")
     str_input = input()
-    list_score = str_input.split(",")
+    if str_input != "000000":
+        str_input = str_input.replace("，", ",")
+        list_score = str_input.split(",")
         for j in range(len(list_score)):
             if j == 0:
                 list_score[j] = int(list_score[j])
@@ -22,6 +27,8 @@ for i in range(num_stu):
                 list_score[j] = float(list_score[j])
         list_global.append(list_score)
         print("学号为", list_score[0], "的学生已经记录")
+    else:
+        break
 
 ###### OUTPUT
 ospath = os.path.join(os.path.expanduser("~"), "Desktop") + "\\test_score.csv"
