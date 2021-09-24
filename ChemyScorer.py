@@ -16,27 +16,33 @@ def Put():
     return 1
 
 
-###### MODE CHANGE
-print("请输入您希望进入的模式")
-print("1.动员模式")
-print("2.录入模式")
-print("3.汇总模式")
-print("4.退出程序")
+###### MODE_FUNC
 
-GLOBAL_MODE = input()
 
 def MODE_TASK():
+    print("1.")
     return 0
 
 
 def MODE_INPUT():
+    print("2.")
     return 0
 
 
 def MODE_MERGE():
+    print("3.")
     return 0
 
+
+###### MODE CHANGE
 while True:
+    print("==请输入您希望进入的模式==")
+    print("(不输入或异常输入均会退出)")
+    print("1.动员模式")
+    print("2.录入模式")
+    print("3.汇总模式")
+    print("4.退出程序")
+    GLOBAL_MODE = input()
     if eval(GLOBAL_MODE) == 1:
         MODE_TASK()
     elif eval(GLOBAL_MODE) == 2:
