@@ -3,51 +3,75 @@ import os
 import sqlite3
 
 ###### GLOBAL
-GLOBAL_DEBUG=1
+GLOBAL_DEBUG = 1
 GLOBAL_MODE = 0
 
-GLOBAL_TASKNAME=""
+GLOBAL_TASKNAME = ""
+GLOBAL_STU_NUM = 0
+GLOBAL_FORCE_REVIEW_MEMBER = ""
 
 
 ###### LIB_FUNC
 
 def replaceX(str, A, B):
-    if A in str:
-        if GLOBAL_DEBUG ==1:
-            print("In", str, "Find\"", A, "\"--->\"", B, "\"")
-        str = str.replace(A, B)
-    return str
+    if A in src:
+        if GLOBAL_DEBUG == 1:
+            print("In", src, "Find\"", A, "\"--->\"", B, "\"")
+        src = src.replace(A, B)
+    return src
 
 
 ###### Database Operation
 
-def Insert():
+def PUSH():
     return 1
 
 
-def Put():
+def POP():
     return 1
 
 
 ###### MODE_FUNC
 
 
-def MODE_TASK():
+def MODE_CREATE():
     print("==别讲究这个了，直接先录入==")
     return -1
 
 
 def MODE_INPUT():
-    ###### INIT
-    print("==请输入预计本次录入的学生人数==")
+    ## STEP1
+    STEP = 1
+    print("==STEP", STEP, "请输入本次待录入成绩的考试名称==")
+    print("1.推荐仅包含英文数字下划线，不建议出现横线空格和中文")
+    print("2.输入000000则选择已有考试文件")
+    GLOBAL_TASKNAME = input()
+    STEP += 1
+    if GLOBAL_TASKNAME !="000000":
+        DATABASE = sqlite3.connect('test_score.db')
+    else:
+        print("请选择需要打开的文件")
+    ## STEP2
+    CURSOR_select_force_review_member=DATABASE.cursor()
+    SQL_select_force_review_member="SELECT FORCE_REVIEW_MEMBER FROM HEAD"
+    CURSOR_select_force_review_member.execute(SQL_select_force_review_member)
+    GLOBAL_FORCE_REVIEW_MEMBER=CURSOR_select_force_review_member.fetchone()[0]
+    if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1:
+        print("==STEP", STEP, "请输入录入人员的姓名==")
+        GLOBAL_TASKNAME = input()
+        STEP += 1
+    ## STEP3
+    print("==STEP", STEP, "请输入预计本次录入的学生人数==")
     GLOBAL_STU_NUM = int(input())
     list_global = []
+
     print("1.接下来输入时中间必须用英文逗号分割")
     print("2.题目分数必须严格按照顺序执行，没有分数的题目需要写0分")
     print("3.总题目数量可自动识别，保证执行过程中一致即可")
     print("4.如果输入到一半不想输入了，就输入000000打断程序")
-    print("样例：  114,5,1,4,1,9,1,9,8,1,0")
     print("5.每次使用前输出文件不能在使用中")
+    print("样例（标准输入）：  114,5.5,1,4,1,9,1,9,8,1,0")
+    print("样例（快速注记）：  114c5q1s4s1s9s1s9s8s1s0s")
     print("\n")
 
     ###### INPUT
@@ -71,7 +95,7 @@ def MODE_INPUT():
             str_input = str_input.replace(",,", ",")
             if str_input[len(str_input) - 1] == ",":
                 str_input = str_input[0:len(str_input) - 1]
-            if GLOBAL_DEBUG ==1:
+            if GLOBAL_DEBUG == 1:
                 print(str_input)
             list_score = str_input.split(",")
             for j in range(len(list_score)):
@@ -118,13 +142,13 @@ def MODE_MERGE():
 while True:
     print("==请输入您希望进入的模式==")
     print("(不输入或异常输入均会退出)")
-    print("1.动员模式")
+    print("1.创建考试")
     print("2.录入模式")
     print("3.汇总模式")
     print("4.退出程序")
     GLOBAL_MODE = input()
     if eval(GLOBAL_MODE) == 1:
-        TEMP_RETURN = MODE_TASK()
+        TEMP_RETURN = MODE_CREATE()
     elif eval(GLOBAL_MODE) == 2:
         TEMP_RETURN = MODE_INPUT()
     elif eval(GLOBAL_MODE) == 3:
