@@ -3,17 +3,21 @@ import os
 import sqlite3
 
 ###### GLOBAL
+global GLOBAL_DEBUG
+global GLOBAL_MODE
+
+global GLOBAL_TASK_NAME
+global GLOBAL_QUESION_NUM
+global GLOBAL_FORCE_REVIEW_MEMBER
+global GLOBAL_FORCE_REVIEW_TIME
+
+
 GLOBAL_DEBUG = 1
 GLOBAL_MODE = 0
 
-GLOBAL_TASKNAME = ""
-GLOBAL_STU_NUM = 0
-GLOBAL_FORCE_REVIEW_MEMBER = ""
-
-
 ###### LIB_FUNC
 
-def replaceX(str, A, B):
+def replaceX(src, A, B):
     if A in src:
         if GLOBAL_DEBUG == 1:
             print("In", src, "Find\"", A, "\"--->\"", B, "\"")
@@ -35,7 +39,22 @@ def POP():
 
 
 def MODE_CREATE():
-    print("==别讲究这个了，直接先录入==")
+    STEP = 1
+    ## TASK_NAME
+    print("==STEP", STEP, "请输入本次待录入成绩的考试名称==")
+    print("1.推荐仅包含英文数字下划线")
+    print("2.不建议出现横线空格和中文")
+    GLOBAL_TASK_NAME = input()
+    STEP += 1
+    ## QUESION_NUM
+    print("==STEP", STEP, "请输入本次考试共有多少题目==")
+    print("1.推荐仅包含英文数字下划线")
+    print("2.不建议出现横线空格和中文")
+    GLOBAL_QUESION_NUM = input()
+    STEP += 1
+    ## xieru
+    DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
+    # 然后把TASKNAME自动塞进去
     return -1
 
 
@@ -43,26 +62,34 @@ def MODE_INPUT():
     ## STEP1
     STEP = 1
     print("==STEP", STEP, "请输入本次待录入成绩的考试名称==")
-    print("1.推荐仅包含英文数字下划线，不建议出现横线空格和中文")
-    print("2.输入000000则选择已有考试文件")
-    GLOBAL_TASKNAME = input()
+    print("1.推荐仅包含英文数字下划线")
+    print("2.不建议出现横线空格和中文")
+    print("3.输入000000则选择已有考试文件")
+    GLOBAL_TASK_NAME = input()
     STEP += 1
-    if GLOBAL_TASKNAME !="000000":
-        DATABASE = sqlite3.connect('test_score.db')
+    if GLOBAL_TASK_NAME != "000000":
+        DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
+        # 然后把TASKNAME自动塞进去
     else:
+        # 后期GUI界面需要给一个可选择的
         print("请选择需要打开的文件")
+        GLOBAL_DBNAME = input()
+        DATABASE = sqlite3.connect(str(GLOBAL_DBNAME) + ".db")
     ## STEP2
-    CURSOR_select_force_review_member=DATABASE.cursor()
-    SQL_select_force_review_member="SELECT FORCE_REVIEW_MEMBER FROM HEAD"
+    CURSOR_select_force_review_member = DATABASE.cursor()
+    SQL_select_force_review_member = "SELECT FORCE_REVIEW_MEMBER FROM HEAD"
     CURSOR_select_force_review_member.execute(SQL_select_force_review_member)
-    GLOBAL_FORCE_REVIEW_MEMBER=CURSOR_select_force_review_member.fetchone()[0]
+    GLOBAL_FORCE_REVIEW_MEMBER = CURSOR_select_force_review_member.fetchone()[0]
+    CURSOR_select_force_review_member.close()
     if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1:
         print("==STEP", STEP, "请输入录入人员的姓名==")
         GLOBAL_TASKNAME = input()
         STEP += 1
     ## STEP3
     print("==STEP", STEP, "请输入预计本次录入的学生人数==")
-    GLOBAL_STU_NUM = int(input())
+    STU_NUM = int(input())
+    if STU_NUM <= 0:
+        return -1
     list_global = []
 
     print("1.接下来输入时中间必须用英文逗号分割")
@@ -75,7 +102,7 @@ def MODE_INPUT():
     print("\n")
 
     ###### INPUT
-    for i in range(GLOBAL_STU_NUM):
+    for i in range(STU_NUM):
         print("==请输入一个学生的学号和各题目成绩==")
         str_input = input()
         if str_input != "000000":
@@ -154,7 +181,9 @@ while True:
     elif eval(GLOBAL_MODE) == 3:
         TEMP_RETURN = MODE_MERGE()
     else:
+        TEMP_RETURN = 0
         print("EXIT")
         break
-
+if GLOBAL_MODE == 2 and TEMP_RETURN == -1:
+    print("未正常退出")
 quit(0)
