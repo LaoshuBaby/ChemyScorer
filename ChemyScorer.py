@@ -1,5 +1,38 @@
 ###### IMPORT
 import os
+import sqlite3
+
+###### GLOBAL
+GLOBAL_MODE = 0
+
+
+###### Database Operation
+
+def Insert():
+    return 1
+
+
+def Put():
+    return 1
+
+
+###### MODE CHANGE
+print("请输入您希望进入的模式")
+print("1.动员模式")
+print("2.录入模式")
+print("3.汇总模式")
+print("4.退出程序")
+
+GLOBAL_MODE = input()
+if eval(GLOBAL_MODE) == 1:
+    print("1")
+elif eval(GLOBAL_MODE)==2:
+    print("2")
+elif eval(GLOBAL_MODE)==3:
+    print("3")
+else:
+    print("EXIT")
+    quit(-1)
 
 ###### INIT
 print("请输入总共的学生人数")
@@ -57,5 +90,3 @@ for i in range(len(list_global)):
     outputfile.write(temp_str + "\n")
 ### FINISH
 outputfile.close()
-
-
