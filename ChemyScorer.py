@@ -66,28 +66,33 @@ def MODE_CREATE():
     STEP += 1
     ## WRITE
     DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
-    CURSOR_init=DATABASE.cursor()
-    SQL_init_BODY="CREATE TABLE "BODY" (
-  "STU_NUMBER" integer NOT NULL,
-  "SCORE_LIST" TEXT(255) NOT NULL,
-  "REVIEW_MEMBER" TEXT(255),
-  "REVIEW_TIME" TEXT(255),
-  PRIMARY KEY ("STU_NUMBER")
-);"
-    SQL_init_HEAD="CREATE TABLE "HEAD" (
-  "TASK_NAME" text(255) COLLATE BINARY,
-  "QUESTION_NUM" integer,
-  "FORCE_REVIEW_MEMBER" text(255),
-  "FORCE_REVIEW_TIME" text(255)
-);"
+    CURSOR_init = DATABASE.cursor()
+    SQL_init_BODY = "CREATE TABLE \"BODY\" (" \
+                    "\"STU_NUMBER\" integer NOT NULL," \
+                    "\"SCORE_LIST\" TEXT(255) NOT NULL," \
+                    "\"REVIEW_MEMBER\" TEXT(255)," \
+                    "\"REVIEW_TIME\" TEXT(255)," \
+                    "PRIMARY KEY (\"STU_NUMBER\")" \
+                    ");"
+    SQL_init_HEAD = "CREATE TABLE \"HEAD\" (" \
+                    "\"TASK_NAME\" text(255) COLLATE BINARY," \
+                    "\"QUESTION_NUM\" integer," \
+                    "\"FORCE_REVIEW_MEMBER\" text(255)," \
+                    "\"FORCE_REVIEW_TIME\" text(255)" \
+                    ");"
+    CURSOR_init.execute(SQL_init_BODY)
+    CURSOR_init.execute(SQL_init_HEAD)
     CURSOR_init.close()
     CURSOR_create_task = DATABASE.cursor()
     SQL_create_task_comma = ", "
-    SQL_create_task = "INSERT INTO \"main\".\"HEAD\" VALUES ("
-    SQL_create_task += GLOBAL_TASK_NAME + SQL_create_task_comma
+    # SQL_create_task = "INSERT INTO \"HEAD\" (\"TASK_NAME\", \"QUESTION_NUM\", \"FORCE_REVIEW_MEMBER\", \"FORCE_REVIEW_TIME\") VALUES ("
+    SQL_create_task = "INSERT INTO \"main\".\"HEAD\" (\"TASK_NAME\", \"QUESTION_NUM\", \"FORCE_REVIEW_MEMBER\", \"FORCE_REVIEW_TIME\") VALUES ("
+    # SQL_create_task = "INSERT INTO HEAD VALUES ("
+    SQL_create_task += "'" + GLOBAL_TASK_NAME + "'" + SQL_create_task_comma
     SQL_create_task += str(GLOBAL_QUESION_NUM) + SQL_create_task_comma
-    SQL_create_task += GLOBAL_FORCE_REVIEW_MEMBER + SQL_create_task_comma
-    SQL_create_task += GLOBAL_FORCE_REVIEW_TIME + ")"
+    SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_MEMBER + "'" + SQL_create_task_comma
+    SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_TIME + "'" + ");"
+    print(SQL_create_task)
     CURSOR_create_task.execute(SQL_create_task)
     CURSOR_create_task.close()
     ## FINISH
