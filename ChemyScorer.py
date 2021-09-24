@@ -24,15 +24,29 @@ print("3.汇总模式")
 print("4.退出程序")
 
 GLOBAL_MODE = input()
-if eval(GLOBAL_MODE) == 1:
-    print("1")
-elif eval(GLOBAL_MODE)==2:
-    print("2")
-elif eval(GLOBAL_MODE)==3:
-    print("3")
-else:
-    print("EXIT")
-    quit(-1)
+
+def MODE_TASK():
+    return 0
+
+
+def MODE_INPUT():
+    return 0
+
+
+def MODE_MERGE():
+    return 0
+
+while True:
+    if eval(GLOBAL_MODE) == 1:
+        MODE_TASK()
+    elif eval(GLOBAL_MODE) == 2:
+        MODE_INPUT()
+    elif eval(GLOBAL_MODE) == 3:
+        MODE_MERGE()
+    else:
+        print("EXIT")
+        break
+quit(0)
 
 ###### INIT
 print("请输入总共的学生人数")
