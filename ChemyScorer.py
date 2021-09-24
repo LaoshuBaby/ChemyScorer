@@ -11,9 +11,9 @@ global GLOBAL_QUESION_NUM
 global GLOBAL_FORCE_REVIEW_MEMBER
 global GLOBAL_FORCE_REVIEW_TIME
 
-
 GLOBAL_DEBUG = 1
 GLOBAL_MODE = 0
+
 
 ###### LIB_FUNC
 
@@ -48,14 +48,51 @@ def MODE_CREATE():
     STEP += 1
     ## QUESION_NUM
     print("==STEP", STEP, "请输入本次考试共有多少题目==")
-    print("1.推荐仅包含英文数字下划线")
-    print("2.不建议出现横线空格和中文")
-    GLOBAL_QUESION_NUM = input()
+    GLOBAL_QUESION_NUM = int(input())
+    if GLOBAL_QUESION_NUM <= 0:
+        return "ERROR_NONEXIST_QUANTITY"
     STEP += 1
-    ## xieru
+    ## FORCE_REVIEW_MEMBER
+    print("==STEP", STEP, "录入过程是否强制签名==")
+    print("1.强制签名填1或True，否则填0或False")
+    print("2.大小写敏感")
+    GLOBAL_FORCE_REVIEW_MEMBER = input()
+    STEP += 1
+    ## FORCE_REVIEW_TIME
+    print("==STEP", STEP, "录入过程是否强制记录瞬间时间==")
+    print("1.强制记录时间填1或True，否则填0或False")
+    print("2.大小写敏感")
+    GLOBAL_FORCE_REVIEW_TIME = input()
+    STEP += 1
+    ## WRITE
     DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
-    # 然后把TASKNAME自动塞进去
-    return -1
+    CURSOR_init=DATABASE.cursor()
+    SQL_init_BODY="CREATE TABLE "BODY" (
+  "STU_NUMBER" integer NOT NULL,
+  "SCORE_LIST" TEXT(255) NOT NULL,
+  "REVIEW_MEMBER" TEXT(255),
+  "REVIEW_TIME" TEXT(255),
+  PRIMARY KEY ("STU_NUMBER")
+);"
+    SQL_init_HEAD="CREATE TABLE "HEAD" (
+  "TASK_NAME" text(255) COLLATE BINARY,
+  "QUESTION_NUM" integer,
+  "FORCE_REVIEW_MEMBER" text(255),
+  "FORCE_REVIEW_TIME" text(255)
+);"
+    CURSOR_init.close()
+    CURSOR_create_task = DATABASE.cursor()
+    SQL_create_task_comma = ", "
+    SQL_create_task = "INSERT INTO \"main\".\"HEAD\" VALUES ("
+    SQL_create_task += GLOBAL_TASK_NAME + SQL_create_task_comma
+    SQL_create_task += str(GLOBAL_QUESION_NUM) + SQL_create_task_comma
+    SQL_create_task += GLOBAL_FORCE_REVIEW_MEMBER + SQL_create_task_comma
+    SQL_create_task += GLOBAL_FORCE_REVIEW_TIME + ")"
+    CURSOR_create_task.execute(SQL_create_task)
+    CURSOR_create_task.close()
+    ## FINISH
+    DATABASE.close()
+    return 0
 
 
 def MODE_INPUT():
@@ -81,7 +118,7 @@ def MODE_INPUT():
     CURSOR_select_force_review_member.execute(SQL_select_force_review_member)
     GLOBAL_FORCE_REVIEW_MEMBER = CURSOR_select_force_review_member.fetchone()[0]
     CURSOR_select_force_review_member.close()
-    if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1:
+    if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1 or GLOBAL_FORCE_REVIEW_MEMBER == "1":
         print("==STEP", STEP, "请输入录入人员的姓名==")
         GLOBAL_TASKNAME = input()
         STEP += 1
@@ -89,7 +126,7 @@ def MODE_INPUT():
     print("==STEP", STEP, "请输入预计本次录入的学生人数==")
     STU_NUM = int(input())
     if STU_NUM <= 0:
-        return -1
+        return "ERROR_NONEXIST_QUANTITY"
     list_global = []
 
     print("1.接下来输入时中间必须用英文逗号分割")
@@ -184,6 +221,8 @@ while True:
         TEMP_RETURN = 0
         print("EXIT")
         break
-if GLOBAL_MODE == 2 and TEMP_RETURN == -1:
-    print("未正常退出")
+if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+    print("退出原因：不存在的数量")
+if GLOBAL_MODE == 2 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+    print("退出原因：不存在的数量")
 quit(0)
