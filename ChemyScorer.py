@@ -222,22 +222,32 @@ def MODE_MERGE():
         print("文件记载到库里了")
     ## 合并输出文件，在这之前需要先排序
     ## 造一个comp函数，对多个结构体排序
+    # TEMP = SWAP(A0, B0)
+    # A0 = TEMP[0]
+    # B0 = TEMP[1]
+    # del TEMP
+    ## 排序后逐个扫，得到学号最大值
+    # ## 然后range(STU_NUMBER_MAX)以后对缺失的插值补齐
+    # for i in range(STU_NUMBER_MAX):
+    #     flag_EXIST = 0
+    #     TEMP_ROW=[]
+    #     TEMPLETE_NULL=[0,"0",0,0]
+    #     for j in range(len(SCORE_RAW)):
+    #         if SCORE_RAW[j][0]==i:
+    #             flag_EXIST=1
+    #             TEMP_ROW=SCORE_RAW[j]
+    #     if flag_EXIST==1:
+    #         STU_NUMBER_FULL[i]=TEMP_ROW
+    #     else:
+    #         STU_NUMBER_FULL[i]=TEMPLETE_NULL
+    # ## 然后STU_NUMBER_FULL就是拍好了可以输出的那个
     return -1
 
 
 ###### MAIN
 
-A0=[223,1,5,6,8]
-B0=[154,5,6,7]
-print(A0)
-print(B0)
-TEMP=SWAP(A0,B0)
-A0=TEMP[0]
-B0=TEMP[1]
-del TEMP
-print(A0)
-print(B0)
-exit(0)
+
+
 
 while True:
     print("==请输入您希望进入的模式==")
