@@ -34,6 +34,11 @@ def PUSH():
 def POP():
     return 1
 
+def SWAP(A,B):
+    if A[0]<B[0]:
+        return [A,B]
+    else:
+        return [B,A]
 
 ###### MODE_FUNC
 
@@ -203,11 +208,37 @@ def MODE_INPUT():
 
 
 def MODE_MERGE():
-    print("还没做好")
+    STEP=1
+    print("==STEP", STEP, "请输入预计本次合并的文件个数==")
+    FILE_NUM = int(input())
+    if FILE_NUM <= 0:
+        return "ERROR_NONEXIST_QUANTITY"
+    FILE_LIST=[]
+    for i in range(FILE_NUM):
+        print("==请选择第",i+1,"个文件的位置==")
+        FILE_LIST.append(input())
+    ## 开始逐个文件读取然后记录数据库
+    for i in range(FILE_LIST):
+        print("文件记载到库里了")
+    ## 合并输出文件，在这之前需要先排序
+    ## 造一个comp函数，对多个结构体排序
     return -1
 
 
 ###### MAIN
+
+A0=[223,1,5,6,8]
+B0=[154,5,6,7]
+print(A0)
+print(B0)
+TEMP=SWAP(A0,B0)
+A0=TEMP[0]
+B0=TEMP[1]
+del TEMP
+print(A0)
+print(B0)
+exit(0)
+
 while True:
     print("==请输入您希望进入的模式==")
     print("(不输入或异常输入均会退出)")
@@ -229,5 +260,7 @@ while True:
 if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
     print("退出原因：不存在的数量")
 if GLOBAL_MODE == 2 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+    print("退出原因：不存在的数量")
+if GLOBAL_MODE == 3 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
     print("退出原因：不存在的数量")
 quit(0)
