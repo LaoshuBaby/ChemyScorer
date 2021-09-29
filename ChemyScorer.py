@@ -1,7 +1,9 @@
 ###### IMPORT
-import os
-import time
 import sqlite3
+import time
+import os
+import sys
+import tkinter
 
 ###### GLOBAL
 global GLOBAL_DEBUG
@@ -365,30 +367,42 @@ def MODE_MERGE():
 
 
 ###### MAIN
-
-
-while True:
-    print("==请输入您希望进入的模式==")
-    print("(不输入或异常输入均会退出)")
-    print("1.创建考试")
-    print("2.录入模式")
-    print("3.汇总模式")
-    print("4.退出程序")
-    GLOBAL_MODE = input()
-    if eval(GLOBAL_MODE) == 1:
-        TEMP_RETURN = MODE_CREATE()
-    elif eval(GLOBAL_MODE) == 2:
-        TEMP_RETURN = MODE_INPUT()
-    elif eval(GLOBAL_MODE) == 3:
-        TEMP_RETURN = MODE_MERGE()
-    else:
-        TEMP_RETURN = 0
-        print("EXIT")
-        break
-if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
-    print("退出原因：不存在的数量")
-if GLOBAL_MODE == 2 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
-    print("退出原因：不存在的数量")
-if GLOBAL_MODE == 3 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
-    print("退出原因：不存在的数量")
-quit(0)
+if __name__ == '__main__':
+    # top = tkinter.Tk()
+    # top.mainloop()
+    ARGUMENT_DICT = {}
+    for i in range(len(sys.argv)):
+        if (i != 0) and (i + 1 <= len(sys.argv) - 1):
+            ARGUMENT_DICT.update({sys.argv[i].replace("-",""): sys.argv[i + 1]})
+            i += 1
+        elif i != 0:
+            ARGUMENT_DICT.update({sys.argv[i].replace("-",""): "NULL"})
+            i += 1
+        else:
+            ARGUMENT_DICT.update({"path": sys.argv[i]})
+    print(ARGUMENT_DICT)
+    while True:
+        print("==请输入您希望进入的模式==")
+        print("(不输入或异常输入均会退出)")
+        print("1.创建考试")
+        print("2.录入模式")
+        print("3.汇总模式")
+        print("4.退出程序")
+        GLOBAL_MODE = input()
+        if eval(GLOBAL_MODE) == 1:
+            TEMP_RETURN = MODE_CREATE()
+        elif eval(GLOBAL_MODE) == 2:
+            TEMP_RETURN = MODE_INPUT()
+        elif eval(GLOBAL_MODE) == 3:
+            TEMP_RETURN = MODE_MERGE()
+        else:
+            TEMP_RETURN = 0
+            print("EXIT")
+            break
+    if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+        print("退出原因：不存在的数量")
+    if GLOBAL_MODE == 2 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+        print("退出原因：不存在的数量")
+    if GLOBAL_MODE == 3 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+        print("退出原因：不存在的数量")
+    quit(0)
