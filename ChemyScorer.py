@@ -241,11 +241,11 @@ def MODE_INPUT():
                     DATA_TOKEN[j] = float(DATA_TOKEN[j])
                     DATA_TOKEN_STR.append(float(DATA_TOKEN[j]))
             MEMORY.append(DATA_TOKEN)
-            DATA_LIST=[]
-            DATA_LIST.append=[DATA_TOKEN[0], "INT"]
-            DATA_LIST.append=[str(DATA_TOKEN_STR), "STRING"]
-            DATA_LIST.append=["NULL", "STRING"]
-            DATA_LIST.append=["NULL", "STRING"]
+            DATA_LIST = []
+            DATA_LIST.append([DATA_TOKEN[0], "INT"])
+            DATA_LIST.append([str(DATA_TOKEN_STR), "STRING"])
+            DATA_LIST.append(["NULL", "STRING"])
+            DATA_LIST.append(["NULL", "STRING"])
             print("学号为", DATA_TOKEN[0], "的学生已经记录")
             ## PUSH
             PUSH(DATABASE, "BODY", "", DATA_LIST)
