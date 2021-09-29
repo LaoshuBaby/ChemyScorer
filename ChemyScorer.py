@@ -27,15 +27,36 @@ def replaceX(src, A, B):
 
 ###### Database Operation
 
-def PUSH(DATABASE, TABLE_NAME, SQL, DATA_LIST=[]):
-    if TABLE_NAME==0:
-        # ONLY EXECUTE
+def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
+    if TABLE_NAME == 0:
+        # EXECUTE SQL
         CURSOR = DATABASE.cursor()
         CURSOR.execute(SQL)
         CURSOR.close()
         DATABASE.commit()
     else:
-        print("DATA_LIST NEED")
+        # INIT
+        SQL = ""
+        SQL_LEADING = "INSERT INTO " + TABLE_NAME + " VALUES ("
+        SQL_COMMA = ", "
+        SQL_END = ");"
+        # START
+        SQL += SQL_LEADING
+        for i in range(len(DATA_LIST)):
+            if DATA_LIST[i][1] == "NUMBER":
+                SQL += "'" + str(DATA_LIST[i][0]) + "'"
+                if i != (len(DATA_LIST) - 1):
+                    SQL += SQL_COMMA
+            elif DATA_LIST[i][1] == "STRING":
+                SQL += "'" + DATA_LIST[i][0] + "'"
+                if i != (len(DATA_LIST) - 1):
+                    SQL += SQL_COMMA
+            else:
+                SQL += "'" + DATA_LIST[i][0] + "'"
+                if i != (len(DATA_LIST) - 1):
+                    SQL += SQL_COMMA
+        SQL += SQL_END
+        print(SQL)
     return 1
 
 
@@ -81,7 +102,6 @@ def MODE_CREATE():
     STEP += 1
     ## WRITE
     DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
-    CURSOR_init = DATABASE.cursor()
     SQL_init_BODY = "CREATE TABLE \"BODY\" (" \
                     "\"STU_NUMBER\" integer NOT NULL," \
                     "\"SCORE_LIST\" TEXT(255) NOT NULL," \
@@ -95,21 +115,24 @@ def MODE_CREATE():
                     "\"FORCE_REVIEW_MEMBER\" text(255)," \
                     "\"FORCE_REVIEW_TIME\" text(255)" \
                     ");"
-    #CURSOR_init.execute(SQL_init_BODY)
-    #CURSOR_init.execute(SQL_init_HEAD)
-    CURSOR_init.close()
     PUSH(DATABASE, 0, SQL_init_BODY)
     PUSH(DATABASE, 0, SQL_init_HEAD)
-    CURSOR_create_task = DATABASE.cursor()
-    SQL_create_task_comma = ", "
-    SQL_create_task = "INSERT INTO HEAD VALUES ("
-    SQL_create_task += "'" + GLOBAL_TASK_NAME + "'" + SQL_create_task_comma
-    SQL_create_task += str(GLOBAL_QUESION_NUM) + SQL_create_task_comma
-    SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_MEMBER + "'" + SQL_create_task_comma
-    SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_TIME + "'" + ");"
-    print(SQL_create_task)
-    CURSOR_create_task.execute(SQL_create_task)
-    CURSOR_create_task.close()
+    DATA_LIST_INIT = []
+    DATA_LIST_INIT.append([GLOBAL_TASK_NAME, "STRING"])
+    DATA_LIST_INIT.append([GLOBAL_QUESION_NUM, "NUMBER"])
+    DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_MEMBER, "STRING"])
+    DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_TIME, "STRING"])
+    # CURSOR_create_task = DATABASE.cursor()
+    # SQL_create_task_comma = ", "
+    # SQL_create_task = "INSERT INTO HEAD VALUES ("
+    # SQL_create_task += "'" + GLOBAL_TASK_NAME + "'" + SQL_create_task_comma
+    # SQL_create_task += str(GLOBAL_QUESION_NUM) + SQL_create_task_comma
+    # SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_MEMBER + "'" + SQL_create_task_comma
+    # SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_TIME + "'" + ");"
+    # print(SQL_create_task)
+    # CURSOR_create_task.execute(SQL_create_task)
+    # CURSOR_create_task.close()
+    PUSH(DATABASE, "HEAD", "", DATA_LIST_INIT)
     ## FINISH
     DATABASE.commit()
     DATABASE.close()
