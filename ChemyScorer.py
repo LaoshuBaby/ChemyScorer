@@ -43,8 +43,8 @@ def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
         # START
         SQL += SQL_LEADING
         for i in range(len(DATA_LIST)):
-            if DATA_LIST[i][1] == "NUMBER":
-                SQL += "'" + str(DATA_LIST[i][0]) + "'"
+            if DATA_LIST[i][1] == "INT" or DATA_LIST[i][1] == "FLOAT":
+                SQL += str(DATA_LIST[i][0])
                 if i != (len(DATA_LIST) - 1):
                     SQL += SQL_COMMA
             elif DATA_LIST[i][1] == "STRING":
@@ -56,7 +56,12 @@ def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
                 if i != (len(DATA_LIST) - 1):
                     SQL += SQL_COMMA
         SQL += SQL_END
-        print(SQL)
+        if GLOBAL_DEBUG == 1:
+            print(SQL)
+        CURSOR = DATABASE.cursor()
+        CURSOR.execute(SQL)
+        CURSOR.close()
+        DATABASE.commit()
     return 1
 
 
@@ -119,19 +124,9 @@ def MODE_CREATE():
     PUSH(DATABASE, 0, SQL_init_HEAD)
     DATA_LIST_INIT = []
     DATA_LIST_INIT.append([GLOBAL_TASK_NAME, "STRING"])
-    DATA_LIST_INIT.append([GLOBAL_QUESION_NUM, "NUMBER"])
+    DATA_LIST_INIT.append([GLOBAL_QUESION_NUM, "INT"])
     DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_MEMBER, "STRING"])
     DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_TIME, "STRING"])
-    # CURSOR_create_task = DATABASE.cursor()
-    # SQL_create_task_comma = ", "
-    # SQL_create_task = "INSERT INTO HEAD VALUES ("
-    # SQL_create_task += "'" + GLOBAL_TASK_NAME + "'" + SQL_create_task_comma
-    # SQL_create_task += str(GLOBAL_QUESION_NUM) + SQL_create_task_comma
-    # SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_MEMBER + "'" + SQL_create_task_comma
-    # SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_TIME + "'" + ");"
-    # print(SQL_create_task)
-    # CURSOR_create_task.execute(SQL_create_task)
-    # CURSOR_create_task.close()
     PUSH(DATABASE, "HEAD", "", DATA_LIST_INIT)
     ## FINISH
     DATABASE.commit()
