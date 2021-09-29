@@ -198,7 +198,7 @@ def MODE_INPUT():
     STU_NUM = int(input())
     if STU_NUM <= 0:
         return "ERROR_NONEXIST_QUANTITY"
-    list_global = []
+    MEMORY = []
 
     print("1.接下来输入时中间必须用英文逗号分割")
     print("2.题目分数必须严格按照顺序执行，没有分数的题目需要写0分")
@@ -212,40 +212,43 @@ def MODE_INPUT():
     ###### INPUT
     for i in range(STU_NUM):
         print("==请输入一个学生的学号和各题目成绩==")
-        str_input = input()
-        if str_input != "000000":
+        DATA_STR = input()
+        if DATA_STR != "000000":
             ## SPACE
-            str_input = replaceX(str_input, " ", ",")
+            DATA_STR = replaceX(DATA_STR, " ", ",")
             ## CHINESE SYNTAX
-            str_input = replaceX(str_input, "，", ",")
-            str_input = replaceX(str_input, "。", ".")
+            DATA_STR = replaceX(DATA_STR, "，", ",")
+            DATA_STR = replaceX(DATA_STR, "。", ".")
             ## SPECIAL SYNTAX
-            str_input = replaceX(str_input, ".,", ".5,")
-            str_input = replaceX(str_input, "q,", ".5,")
+            DATA_STR = replaceX(DATA_STR, ".,", ".5,")
+            DATA_STR = replaceX(DATA_STR, "q,", ".5,")
             ## FAST SYNTAX
-            str_input = replaceX(str_input, "q", ".5,")  # 小数分数
-            str_input = replaceX(str_input, "c", ",")  # 学号
-            str_input = replaceX(str_input, "s", ",")  # 整数分数
+            DATA_STR = replaceX(DATA_STR, "q", ".5,")  # 小数分数
+            DATA_STR = replaceX(DATA_STR, "c", ",")  # 学号
+            DATA_STR = replaceX(DATA_STR, "s", ",")  # 整数分数
             ## BUG FIX
-            str_input = str_input.replace(",,", ",")
-            if str_input[len(str_input) - 1] == ",":
-                str_input = str_input[0:len(str_input) - 1]
+            DATA_STR = DATA_STR.replace(",,", ",")
+            if DATA_STR[len(DATA_STR) - 1] == ",":
+                DATA_STR = DATA_STR[0:len(DATA_STR) - 1]
             if GLOBAL_DEBUG == 1:
-                print(str_input)
-            list_score = str_input.split(",")
-            for j in range(len(list_score)):
+                print(DATA_STR)
+            DATA_TOKEN = DATA_STR.split(",")
+            DATA_TOKEN_STR = []
+            for j in range(len(DATA_TOKEN)):
                 if j == 0:
-                    list_score[j] = int(list_score[j])
+                    DATA_TOKEN[j] = int(DATA_TOKEN[j])
                 else:
-                    list_score[j] = float(list_score[j])
-            list_global.append(list_score)
-            print("学号为", list_score[0], "的学生已经记录")
-            ######
-            ## PUSH
+                    DATA_TOKEN[j] = float(DATA_TOKEN[j])
+                    DATA_TOKEN_STR.append(float(DATA_TOKEN[j]))
+            MEMORY.append(DATA_TOKEN)
             DATA_LIST=[]
-            DATA_LIST.append([1,""])
+            DATA_LIST.append=[DATA_TOKEN[0], "INT"]
+            DATA_LIST.append=[str(DATA_TOKEN_STR), "STRING"]
+            DATA_LIST.append=["NULL", "STRING"]
+            DATA_LIST.append=["NULL", "STRING"]
+            print("学号为", DATA_TOKEN[0], "的学生已经记录")
+            ## PUSH
             PUSH(DATABASE, "BODY", "", DATA_LIST)
-            ######
         else:
             break
 
@@ -254,18 +257,18 @@ def MODE_INPUT():
     outputfile = open(ospath, "w")
     ### HEAD
     temp_str_head = "\"学号\""
-    for i in range(len(list_global[0]) - 1):
+    for i in range(len(MEMORY[0]) - 1):
         temp_str_head += ",\"第"
         temp_str_head += str(i + 1)
         temp_str_head += "题\""
     outputfile.write(temp_str_head + "\n")
     del temp_str_head
     ### BODY
-    for i in range(len(list_global)):
-        temp_str = str(list_global[i][0])
-        for j in range(len(list_global[i]) - 1):
+    for i in range(len(MEMORY)):
+        temp_str = str(MEMORY[i][0])
+        for j in range(len(MEMORY[i]) - 1):
             temp_str += ","
-            temp_str += str(list_global[i][j + 1])
+            temp_str += str(MEMORY[i][j + 1])
         outputfile.write(temp_str + "\n")
     ### FINISH
     print("已结束本次录入")
