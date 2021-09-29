@@ -368,41 +368,52 @@ def MODE_MERGE():
 
 ###### MAIN
 if __name__ == '__main__':
-    # top = tkinter.Tk()
-    # top.mainloop()
     ARGUMENT_DICT = {}
+    STATUS = "VALUE"
     for i in range(len(sys.argv)):
-        if (i != 0) and (i + 1 <= len(sys.argv) - 1):
-            ARGUMENT_DICT.update({sys.argv[i].replace("-",""): sys.argv[i + 1]})
-            i += 1
-        elif i != 0:
-            ARGUMENT_DICT.update({sys.argv[i].replace("-",""): "NULL"})
-            i += 1
+        if STATUS == "NAME":
+            if (i != 0) and (i + 1 <= len(sys.argv) - 1):
+                ARGUMENT_DICT.update({sys.argv[i].replace("--", "").upper(): sys.argv[i + 1].upper()})
+            elif i != 0:
+                ARGUMENT_DICT.update({sys.argv[i].replace("--", "").upper(): "NULL"})
+            else:
+                ARGUMENT_DICT.update({"path": sys.argv[i]})
+            STATUS = "VALUE"
         else:
-            ARGUMENT_DICT.update({"path": sys.argv[i]})
+            STATUS = "NAME"
     print(ARGUMENT_DICT)
-    while True:
-        print("==请输入您希望进入的模式==")
-        print("(不输入或异常输入均会退出)")
-        print("1.创建考试")
-        print("2.录入模式")
-        print("3.汇总模式")
-        print("4.退出程序")
-        GLOBAL_MODE = input()
-        if eval(GLOBAL_MODE) == 1:
-            TEMP_RETURN = MODE_CREATE()
-        elif eval(GLOBAL_MODE) == 2:
-            TEMP_RETURN = MODE_INPUT()
-        elif eval(GLOBAL_MODE) == 3:
-            TEMP_RETURN = MODE_MERGE()
-        else:
-            TEMP_RETURN = 0
-            print("EXIT")
-            break
-    if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
-        print("退出原因：不存在的数量")
-    if GLOBAL_MODE == 2 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
-        print("退出原因：不存在的数量")
-    if GLOBAL_MODE == 3 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
-        print("退出原因：不存在的数量")
-    quit(0)
+    # 三千参数，我只取MODE饮
+    if ARGUMENT_DICT["MODE"] == "CLI":
+        while True:
+            print("==请输入您希望进入的模式==")
+            print("(不输入或异常输入均会退出)")
+            print("1.创建考试")
+            print("2.录入模式")
+            print("3.汇总模式")
+            print("4.退出程序")
+            GLOBAL_MODE = input()
+            if eval(GLOBAL_MODE) == 1:
+                TEMP_RETURN = MODE_CREATE()
+            elif eval(GLOBAL_MODE) == 2:
+                TEMP_RETURN = MODE_INPUT()
+            elif eval(GLOBAL_MODE) == 3:
+                TEMP_RETURN = MODE_MERGE()
+            else:
+                TEMP_RETURN = 0
+                print("EXIT")
+                break
+    elif ARGUMENT_DICT["mode"] == "GUI":
+        # top = tkinter.Tk()
+        # top.mainloop()
+        GLOBAL_MODE="GUI_0"
+        TEMP_RETURN=0
+        print("做梦？一边稍稍")
+        # 图形化也应该使用函数调用机制对应到按钮上和接受报错返回
+# 这段异常退出分析是对GUI和CLI共用的
+if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+    print("退出原因：不存在的数量")
+if GLOBAL_MODE == 2 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+    print("退出原因：不存在的数量")
+if GLOBAL_MODE == 3 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
+    print("退出原因：不存在的数量")
+quit(0)
