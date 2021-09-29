@@ -202,7 +202,8 @@ def MODE_INPUT():
     ## OPEN FILE
     STEP = 1
     print("==STEP", STEP, "请打开本次待录入成绩的考试文件==")
-    print("1.输入000000则直接快速新建考试项目")
+    print("1.输入任意内容则直接转到选择文件界面")
+    print("2.输入000000则直接快速新建考试项目")
     TASK_OPEN_MODE = input()
     STEP += 1
     if TASK_OPEN_MODE == "000000":
@@ -223,6 +224,7 @@ def MODE_INPUT():
     ## FORCE_REVIEW_MEMBER
     DATABASE = sqlite3.connect(DATABASE_NAME)
     GLOBAL_FORCE_REVIEW_MEMBER = int(POP(DATABASE, 0, 0, "SELECT FORCE_REVIEW_MEMBER FROM HEAD")[0][0])
+    GLOBAL_FORCE_REVIEW_TIME = int(POP(DATABASE, 0, 0, "SELECT FORCE_REVIEW_TIME FROM HEAD")[0][0])
     if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1 or GLOBAL_FORCE_REVIEW_MEMBER == "1":
         print("==STEP", STEP, "请输入录入人员的姓名==")
         GLOBAL_REVIEW_MEMBER_NAME = input()
@@ -278,8 +280,14 @@ def MODE_INPUT():
             DATA_LIST = []
             DATA_LIST.append([DATA_TOKEN[0], "INT"])
             DATA_LIST.append([str(DATA_TOKEN_STR), "STRING"])
-            DATA_LIST.append(["NULL", "STRING"])
-            DATA_LIST.append(["NULL", "STRING"])
+            if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1 or GLOBAL_FORCE_REVIEW_MEMBER == "1":
+                DATA_LIST.append([GLOBAL_REVIEW_MEMBER_NAME, "STRING"])
+            else:
+                DATA_LIST.append(["NULL", "STRING"])
+            if GLOBAL_FORCE_REVIEW_TIME == "True" or GLOBAL_FORCE_REVIEW_TIME == 1 or GLOBAL_FORCE_REVIEW_TIME == "1":
+                DATA_LIST.append([getFormatedTime(), "STRING"])
+            else:
+                DATA_LIST.append(["NULL", "STRING"])
             print("学号为", DATA_TOKEN[0], "的学生已经记录")
             ## PUSH
             PUSH(DATABASE, "BODY", "", DATA_LIST)
@@ -288,7 +296,7 @@ def MODE_INPUT():
 
     ### FINISH
     print("已结束本次录入")
-    
+
     DATABASE.commit()
     DATABASE.close()
     return 0
