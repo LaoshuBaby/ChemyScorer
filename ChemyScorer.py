@@ -90,9 +90,7 @@ def MODE_CREATE():
     CURSOR_init.close()
     CURSOR_create_task = DATABASE.cursor()
     SQL_create_task_comma = ", "
-    # SQL_create_task = "INSERT INTO \"HEAD\" (\"TASK_NAME\", \"QUESTION_NUM\", \"FORCE_REVIEW_MEMBER\", \"FORCE_REVIEW_TIME\") VALUES ("
-    SQL_create_task = "INSERT INTO \"main\".\"HEAD\" (\"TASK_NAME\", \"QUESTION_NUM\", \"FORCE_REVIEW_MEMBER\", \"FORCE_REVIEW_TIME\") VALUES ("
-    # SQL_create_task = "INSERT INTO HEAD VALUES ("
+    SQL_create_task = "INSERT INTO HEAD VALUES ("
     SQL_create_task += "'" + GLOBAL_TASK_NAME + "'" + SQL_create_task_comma
     SQL_create_task += str(GLOBAL_QUESION_NUM) + SQL_create_task_comma
     SQL_create_task += "'" + GLOBAL_FORCE_REVIEW_MEMBER + "'" + SQL_create_task_comma
@@ -101,6 +99,7 @@ def MODE_CREATE():
     CURSOR_create_task.execute(SQL_create_task)
     CURSOR_create_task.close()
     ## FINISH
+    DATABASE.commit()
     DATABASE.close()
     return 0
 
@@ -203,7 +202,8 @@ def MODE_INPUT():
     ### FINISH
     print("已结束本次录入")
     outputfile.close()
-
+    DATABASE.commit()
+    DATABASE.close()
     return 0
 
 
