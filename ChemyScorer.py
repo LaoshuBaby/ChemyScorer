@@ -81,7 +81,8 @@ def SWAP(A, B):
         return [B, A]
 
 
-def INIT_TASK(GLOBAL_TASK_NAME="", GLOBAL_QUESION_NUM=0, GLOBAL_FORCE_REVIEW_MEMBER="", GLOBAL_FORCE_REVIEW_TIME="",DATABASE_NAME=""):
+def INIT_TASK(GLOBAL_TASK_NAME="", GLOBAL_QUESION_NUM=0, GLOBAL_FORCE_REVIEW_MEMBER="", GLOBAL_FORCE_REVIEW_TIME="",
+              DATABASE_NAME=""):
     ## PREPARE DATA
     SQL_init_BODY = "CREATE TABLE \"BODY\" (" \
                     "\"STU_NUMBER\" integer NOT NULL," \
@@ -124,8 +125,8 @@ def MODE_CREATE():
     ## QUESION_NUM
     print("==STEP", STEP, "请输入本次考试共有多少题目==")
     GLOBAL_QUESION_NUM = int(input())
-    if GLOBAL_QUESION_NUM <= 0:
-        return "ERROR_NONEXIST_QUANTITY"
+    if GLOBAL_QUESION_NUM < 0:
+        return "ERROR_NONEXIST_QUANTITY"  # 0代表自适应
     STEP += 1
     ## FORCE_REVIEW_MEMBER
     print("==STEP", STEP, "录入过程是否强制签名==")
@@ -151,7 +152,7 @@ def MODE_CREATE():
         DATABASE_NAME = str(GLOBAL_TASK_NAME) + "-" + getFormatedTime() + ".db"
     else:
         DATABASE_NAME = str(GLOBAL_TASK_NAME) + ".db"
-    INIT_TASK(GLOBAL_TASK_NAME, GLOBAL_QUESION_NUM, GLOBAL_FORCE_REVIEW_MEMBER, GLOBAL_FORCE_REVIEW_TIME,DATABASE_NAME)
+    INIT_TASK(GLOBAL_TASK_NAME, GLOBAL_QUESION_NUM, GLOBAL_FORCE_REVIEW_MEMBER, GLOBAL_FORCE_REVIEW_TIME, DATABASE_NAME)
     print("已创建考试文件：" + DATABASE_NAME)
     print("您可将该文件下发给各录入人员")
     return 0
@@ -167,16 +168,20 @@ def MODE_INPUT():
     if TASK_OPEN_MODE == "000000":
         print("==STEP", STEP, "请输入且仅输入考试名称==")
         GLOBAL_TASK_NAME = input()
-        DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
-        # 然后把TASKNAME自动塞进去
+        DATABASE_NAME = str(GLOBAL_TASK_NAME) + "-" + getFormatedTime() + ".db"
+        INIT_TASK(GLOBAL_TASK_NAME, 0, "0", "0", DATABASE_NAME)
         STEP += 1
     else:
-        # 后期GUI界面需要给一个可选择的
-        print("请选择需要打开的文件")
+        print("请输入需要打开的文件的文件名（可不带.db）")
+        print("后期GUI界面会给一个可选择的界面，稍安勿躁")
         GLOBAL_DBNAME = input()
-        DATABASE = sqlite3.connect(str(GLOBAL_DBNAME) + ".db")
+        if ".db" in GLOBAL_DBNAME or ".DB" in GLOBAL_DBNAME:
+            DATABASE_NAME = GLOBAL_DBNAME
+        else:
+            DATABASE_NAME = GLOBAL_DBNAME + ".db"
 
     ## FORCE_REVIEW_MEMBER
+    DATABASE = sqlite3.connect(DATABASE_NAME)
     CURSOR_select_force_review_member = DATABASE.cursor()
     SQL_select_force_review_member = "SELECT FORCE_REVIEW_MEMBER FROM HEAD"
     CURSOR_select_force_review_member.execute(SQL_select_force_review_member)
