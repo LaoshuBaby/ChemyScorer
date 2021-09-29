@@ -72,11 +72,11 @@ def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
     return 1
 
 
-def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM=0):
-    if COLUMN_LIST == []:
+def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM):
+    ## JUDJE MODE
+    if TABLE_NAME == 0:
         # EXECUTE SQL
         CURSOR = DATABASE.cursor()
-        SQL = ""
         if GLOBAL_DEBUG == 1:
             print(SQL)  # 执行前展示
         CURSOR.execute(SQL)
@@ -91,10 +91,21 @@ def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM=0):
         if GLOBAL_DEBUG == 1:
             print(SQL)  # 执行前展示
         CURSOR.execute(SQL)
-        ## FETCH
-        GLOBAL_FORCE_REVIEW_MEMBER = CURSOR.fetchone()[0]
         CURSOR.close()
-    return 1
+    ## FETCH RESULT
+    RESULT_RAW = CURSOR.fetchall()
+    RESULT = []
+    for i in range(len(RESULT_RAW)):
+        if FETCH_NUM==0:
+            # 要0个意味着全都要
+            RESULT.append(list(RESULT_RAW[i]))
+        else:
+            # 要前FETCH_NUM个
+            if i + 1 <= FETCH_NUM:
+                RESULT.append(list(RESULT_RAW[i]))
+    if GLOBAL_DEBUG == 1:
+        print(RESULT)
+    return RESULT
 
 
 def SWAP(A, B):
@@ -104,7 +115,12 @@ def SWAP(A, B):
         return [B, A]
 
 
-def INIT_TASK(GLOBAL_TASK_NAME="", GLOBAL_QUESION_NUM=0, GLOBAL_FORCE_REVIEW_MEMBER="", GLOBAL_FORCE_REVIEW_TIME="",
+###### CORE_FUNC
+
+def INIT_TASK(GLOBAL_TASK_NAME="",
+              GLOBAL_QUESION_NUM=0,
+              GLOBAL_FORCE_REVIEW_MEMBER="",
+              GLOBAL_FORCE_REVIEW_TIME="",
               DATABASE_NAME=""):
     ## PREPARE DATA
     SQL_init_BODY = "CREATE TABLE \"BODY\" (" \
@@ -134,8 +150,6 @@ def INIT_TASK(GLOBAL_TASK_NAME="", GLOBAL_QUESION_NUM=0, GLOBAL_FORCE_REVIEW_MEM
     DATABASE.commit()
     DATABASE.close()
 
-
-###### MODE_FUNC
 
 def MODE_CREATE():
     STEP = 1
@@ -210,6 +224,7 @@ def MODE_INPUT():
     CURSOR_select_force_review_member.execute(SQL_select_force_review_member)
     GLOBAL_FORCE_REVIEW_MEMBER = CURSOR_select_force_review_member.fetchone()[0]
     CURSOR_select_force_review_member.close()
+    GLOBAL_FORCE_REVIEW_MEMBER=POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM=0)
     if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1 or GLOBAL_FORCE_REVIEW_MEMBER == "1":
         print("==STEP", STEP, "请输入录入人员的姓名==")
         GLOBAL_REVIEW_MEMBER_NAME = input()
