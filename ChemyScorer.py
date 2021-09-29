@@ -36,6 +36,8 @@ def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
     if TABLE_NAME == 0:
         # EXECUTE SQL
         CURSOR = DATABASE.cursor()
+        if GLOBAL_DEBUG == 1:
+            print(SQL)  # 执行前展示
         CURSOR.execute(SQL)
         CURSOR.close()
         DATABASE.commit()
@@ -61,9 +63,9 @@ def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
                 if i != (len(DATA_LIST) - 1):
                     SQL += SQL_COMMA
         SQL += SQL_END
-        if GLOBAL_DEBUG == 1:
-            print(SQL)
         CURSOR = DATABASE.cursor()
+        if GLOBAL_DEBUG == 1:
+            print(SQL)  # 执行前展示
         CURSOR.execute(SQL)
         CURSOR.close()
         DATABASE.commit()
@@ -238,6 +240,12 @@ def MODE_INPUT():
                     list_score[j] = float(list_score[j])
             list_global.append(list_score)
             print("学号为", list_score[0], "的学生已经记录")
+            ######
+            ## PUSH
+            DATA_LIST=[]
+            DATA_LIST.append([1,""])
+            PUSH(DATABASE, "BODY", "", DATA_LIST)
+            ######
         else:
             break
 
