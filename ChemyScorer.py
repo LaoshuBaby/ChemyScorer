@@ -72,7 +72,28 @@ def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
     return 1
 
 
-def POP(DATABASE, TABLE_NAME, SQL):
+def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM=0):
+    if COLUMN_LIST == []:
+        # EXECUTE SQL
+        CURSOR = DATABASE.cursor()
+        SQL = ""
+        if GLOBAL_DEBUG == 1:
+            print(SQL)  # 执行前展示
+        CURSOR.execute(SQL)
+        CURSOR.close()
+    else:
+        CURSOR = DATABASE.cursor()
+        SQL = ""
+        SQL += "SELECT "
+        SQL += str(COLUMN_LIST).replace(" ", "").replace("[", "").replace("]", "")
+        SQL += " FROM "
+        SQL += TABLE_NAME
+        if GLOBAL_DEBUG == 1:
+            print(SQL)  # 执行前展示
+        CURSOR.execute(SQL)
+        ## FETCH
+        GLOBAL_FORCE_REVIEW_MEMBER = CURSOR.fetchone()[0]
+        CURSOR.close()
     return 1
 
 
