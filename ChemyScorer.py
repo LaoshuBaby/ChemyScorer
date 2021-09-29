@@ -27,18 +27,28 @@ def replaceX(src, A, B):
 
 ###### Database Operation
 
-def PUSH():
-    return 1
-
-
-def POP():
-    return 1
-
-def SWAP(A,B):
-    if A[0]<B[0]:
-        return [A,B]
+def PUSH(DATABASE, TABLE_NAME, SQL, DATA_LIST=[]):
+    if TABLE_NAME==0:
+        # ONLY EXECUTE
+        CURSOR = DATABASE.cursor()
+        CURSOR.execute(SQL)
+        CURSOR.close()
+        DATABASE.commit()
     else:
-        return [B,A]
+        print("DATA_LIST NEED")
+    return 1
+
+
+def POP(DATABASE, TABLE_NAME, SQL):
+    return 1
+
+
+def SWAP(A, B):
+    if A[0] < B[0]:
+        return [A, B]
+    else:
+        return [B, A]
+
 
 ###### MODE_FUNC
 
@@ -85,9 +95,11 @@ def MODE_CREATE():
                     "\"FORCE_REVIEW_MEMBER\" text(255)," \
                     "\"FORCE_REVIEW_TIME\" text(255)" \
                     ");"
-    CURSOR_init.execute(SQL_init_BODY)
-    CURSOR_init.execute(SQL_init_HEAD)
+    #CURSOR_init.execute(SQL_init_BODY)
+    #CURSOR_init.execute(SQL_init_HEAD)
     CURSOR_init.close()
+    PUSH(DATABASE, 0, SQL_init_BODY)
+    PUSH(DATABASE, 0, SQL_init_HEAD)
     CURSOR_create_task = DATABASE.cursor()
     SQL_create_task_comma = ", "
     SQL_create_task = "INSERT INTO HEAD VALUES ("
@@ -208,14 +220,14 @@ def MODE_INPUT():
 
 
 def MODE_MERGE():
-    STEP=1
+    STEP = 1
     print("==STEP", STEP, "请输入预计本次合并的文件个数==")
     FILE_NUM = int(input())
     if FILE_NUM <= 0:
         return "ERROR_NONEXIST_QUANTITY"
-    FILE_LIST=[]
+    FILE_LIST = []
     for i in range(FILE_NUM):
-        print("==请选择第",i+1,"个文件的位置==")
+        print("==请选择第", i + 1, "个文件的位置==")
         FILE_LIST.append(input())
     ## 开始逐个文件读取然后记录数据库
     for i in range(FILE_LIST):
@@ -245,8 +257,6 @@ def MODE_MERGE():
 
 
 ###### MAIN
-
-
 
 
 while True:
