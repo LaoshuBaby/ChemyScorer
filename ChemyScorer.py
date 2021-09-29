@@ -81,8 +81,37 @@ def SWAP(A, B):
         return [B, A]
 
 
-###### MODE_FUNC
+def INIT_TASK(GLOBAL_TASK_NAME="", GLOBAL_QUESION_NUM=0, GLOBAL_FORCE_REVIEW_MEMBER="", GLOBAL_FORCE_REVIEW_TIME="",DATABASE_NAME=""):
+    ## PREPARE DATA
+    SQL_init_BODY = "CREATE TABLE \"BODY\" (" \
+                    "\"STU_NUMBER\" integer NOT NULL," \
+                    "\"SCORE_LIST\" TEXT(255) NOT NULL," \
+                    "\"REVIEW_MEMBER\" TEXT(255)," \
+                    "\"REVIEW_TIME\" TEXT(255)," \
+                    "PRIMARY KEY (\"STU_NUMBER\")" \
+                    ");"
+    SQL_init_HEAD = "CREATE TABLE \"HEAD\" (" \
+                    "\"TASK_NAME\" text(255) COLLATE BINARY," \
+                    "\"QUESTION_NUM\" integer," \
+                    "\"FORCE_REVIEW_MEMBER\" text(255)," \
+                    "\"FORCE_REVIEW_TIME\" text(255)" \
+                    ");"
+    DATA_LIST_INIT = []
+    DATA_LIST_INIT.append([GLOBAL_TASK_NAME, "STRING"])
+    DATA_LIST_INIT.append([GLOBAL_QUESION_NUM, "INT"])
+    DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_MEMBER, "STRING"])
+    DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_TIME, "STRING"])
+    ## WRITE
+    DATABASE = sqlite3.connect(DATABASE_NAME)
+    PUSH(DATABASE, 0, SQL_init_BODY)
+    PUSH(DATABASE, 0, SQL_init_HEAD)
+    PUSH(DATABASE, "HEAD", "", DATA_LIST_INIT)
+    ## FINISH
+    DATABASE.commit()
+    DATABASE.close()
 
+
+###### MODE_FUNC
 
 def MODE_CREATE():
     STEP = 1
@@ -110,61 +139,44 @@ def MODE_CREATE():
     print("2.大小写敏感")
     GLOBAL_FORCE_REVIEW_TIME = input()
     STEP += 1
-    ## PREPARE DATA
-    SQL_init_BODY = "CREATE TABLE \"BODY\" (" \
-                    "\"STU_NUMBER\" integer NOT NULL," \
-                    "\"SCORE_LIST\" TEXT(255) NOT NULL," \
-                    "\"REVIEW_MEMBER\" TEXT(255)," \
-                    "\"REVIEW_TIME\" TEXT(255)," \
-                    "PRIMARY KEY (\"STU_NUMBER\")" \
-                    ");"
-    SQL_init_HEAD = "CREATE TABLE \"HEAD\" (" \
-                    "\"TASK_NAME\" text(255) COLLATE BINARY," \
-                    "\"QUESTION_NUM\" integer," \
-                    "\"FORCE_REVIEW_MEMBER\" text(255)," \
-                    "\"FORCE_REVIEW_TIME\" text(255)" \
-                    ");"
-    DATA_LIST_INIT = []
-    DATA_LIST_INIT.append([GLOBAL_TASK_NAME, "STRING"])
-    DATA_LIST_INIT.append([GLOBAL_QUESION_NUM, "INT"])
-    DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_MEMBER, "STRING"])
-    DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_TIME, "STRING"])
-    ## WRITE
-    TIME = 1
-    if TIME == 1:
+    ## DATABASE_NAME_TIME
+    print("==STEP", STEP, "生成的文件名中要带当前时间吗==")
+    print("1.这指的是您创建的录入任务文件的文件名")
+    print("2.若考试名称比较显著，如“第5届联考”，建议您选择不带当前时间，输入0")
+    print("2.若考试名称比较宽泛，如“有机作业题”，建议您选择带当前时间，输入1")
+    DATABASE_NAME_TIME = int(input())
+    STEP += 1
+    ## CREATE DATABASE FILE
+    if DATABASE_NAME_TIME == 1:
         DATABASE_NAME = str(GLOBAL_TASK_NAME) + "-" + getFormatedTime() + ".db"
     else:
         DATABASE_NAME = str(GLOBAL_TASK_NAME) + ".db"
-    DATABASE = sqlite3.connect(DATABASE_NAME)
-    PUSH(DATABASE, 0, SQL_init_BODY)
-    PUSH(DATABASE, 0, SQL_init_HEAD)
-    PUSH(DATABASE, "HEAD", "", DATA_LIST_INIT)
-    ## FINISH
-    DATABASE.commit()
-    DATABASE.close()
+    INIT_TASK(GLOBAL_TASK_NAME, GLOBAL_QUESION_NUM, GLOBAL_FORCE_REVIEW_MEMBER, GLOBAL_FORCE_REVIEW_TIME,DATABASE_NAME)
     print("已创建考试文件：" + DATABASE_NAME)
-    print("您可将该文件下发给各录入员，并请他们各自改名")
+    print("您可将该文件下发给各录入人员")
     return 0
 
 
 def MODE_INPUT():
-    ## STEP1
+    ## OPEN FILE
     STEP = 1
-    print("==STEP", STEP, "请输入本次待录入成绩的考试名称==")
-    print("1.推荐仅包含英文数字下划线")
-    print("2.不建议出现横线空格和中文")
-    print("3.输入000000则选择已有考试文件")
-    GLOBAL_TASK_NAME = input()
+    print("==STEP", STEP, "请打开本次待录入成绩的考试文件==")
+    print("1.输入000000则直接快速新建考试项目")
+    TASK_OPEN_MODE = input()
     STEP += 1
-    if GLOBAL_TASK_NAME != "000000":
+    if TASK_OPEN_MODE == "000000":
+        print("==STEP", STEP, "请输入且仅输入考试名称==")
+        GLOBAL_TASK_NAME = input()
         DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
         # 然后把TASKNAME自动塞进去
+        STEP += 1
     else:
         # 后期GUI界面需要给一个可选择的
         print("请选择需要打开的文件")
         GLOBAL_DBNAME = input()
         DATABASE = sqlite3.connect(str(GLOBAL_DBNAME) + ".db")
-    ## STEP2
+
+    ## FORCE_REVIEW_MEMBER
     CURSOR_select_force_review_member = DATABASE.cursor()
     SQL_select_force_review_member = "SELECT FORCE_REVIEW_MEMBER FROM HEAD"
     CURSOR_select_force_review_member.execute(SQL_select_force_review_member)
@@ -172,10 +184,10 @@ def MODE_INPUT():
     CURSOR_select_force_review_member.close()
     if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1 or GLOBAL_FORCE_REVIEW_MEMBER == "1":
         print("==STEP", STEP, "请输入录入人员的姓名==")
-        GLOBAL_TASKNAME = input()
+        GLOBAL_REVIEW_MEMBER_NAME = input()
         STEP += 1
     ## STEP3
-    print("==STEP", STEP, "请输入预计本次录入的学生人数==")
+    print("==STEP", STEP, "请输入[预计]本次录入的学生人数==")
     STU_NUM = int(input())
     if STU_NUM <= 0:
         return "ERROR_NONEXIST_QUANTITY"
