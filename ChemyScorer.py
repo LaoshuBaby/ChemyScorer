@@ -72,7 +72,7 @@ def PUSH(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
     return 1
 
 
-def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM):
+def POP(DATABASE, TABLE_NAME, FETCH_NUM, SQL="", COLUMN_LIST=[]):
     ## JUDJE MODE
     if TABLE_NAME == 0:
         # EXECUTE SQL
@@ -80,7 +80,6 @@ def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM):
         if GLOBAL_DEBUG == 1:
             print(SQL)  # 执行前展示
         CURSOR.execute(SQL)
-        CURSOR.close()
     else:
         CURSOR = DATABASE.cursor()
         SQL = ""
@@ -91,12 +90,12 @@ def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM):
         if GLOBAL_DEBUG == 1:
             print(SQL)  # 执行前展示
         CURSOR.execute(SQL)
-        CURSOR.close()
     ## FETCH RESULT
     RESULT_RAW = CURSOR.fetchall()
+    CURSOR.close()
     RESULT = []
     for i in range(len(RESULT_RAW)):
-        if FETCH_NUM==0:
+        if FETCH_NUM == 0:
             # 要0个意味着全都要
             RESULT.append(list(RESULT_RAW[i]))
         else:
@@ -106,6 +105,10 @@ def POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM):
     if GLOBAL_DEBUG == 1:
         print(RESULT)
     return RESULT
+
+
+def PIPI(DATABASE, TABLE_NAME, SQL="", DATA_LIST=[]):
+    return PUSH(DATABASE, TABLE_NAME, SQL, DATA_LIST)
 
 
 def SWAP(A, B):
@@ -219,12 +222,7 @@ def MODE_INPUT():
 
     ## FORCE_REVIEW_MEMBER
     DATABASE = sqlite3.connect(DATABASE_NAME)
-    CURSOR_select_force_review_member = DATABASE.cursor()
-    SQL_select_force_review_member = "SELECT FORCE_REVIEW_MEMBER FROM HEAD"
-    CURSOR_select_force_review_member.execute(SQL_select_force_review_member)
-    GLOBAL_FORCE_REVIEW_MEMBER = CURSOR_select_force_review_member.fetchone()[0]
-    CURSOR_select_force_review_member.close()
-    GLOBAL_FORCE_REVIEW_MEMBER=POP(DATABASE, TABLE_NAME, SQL=[], COLUMN_LIST=[], FETCH_NUM=0)
+    GLOBAL_FORCE_REVIEW_MEMBER = int(POP(DATABASE, 0, 0, "SELECT FORCE_REVIEW_MEMBER FROM HEAD")[0][0])
     if GLOBAL_FORCE_REVIEW_MEMBER == "True" or GLOBAL_FORCE_REVIEW_MEMBER == 1 or GLOBAL_FORCE_REVIEW_MEMBER == "1":
         print("==STEP", STEP, "请输入录入人员的姓名==")
         GLOBAL_REVIEW_MEMBER_NAME = input()
@@ -288,27 +286,9 @@ def MODE_INPUT():
         else:
             break
 
-    ###### OUTPUT
-    ospath = os.path.join(os.path.expanduser("~"), "Desktop") + "\\test_score.csv"
-    outputfile = open(ospath, "w")
-    ### HEAD
-    temp_str_head = "\"学号\""
-    for i in range(len(MEMORY[0]) - 1):
-        temp_str_head += ",\"第"
-        temp_str_head += str(i + 1)
-        temp_str_head += "题\""
-    outputfile.write(temp_str_head + "\n")
-    del temp_str_head
-    ### BODY
-    for i in range(len(MEMORY)):
-        temp_str = str(MEMORY[i][0])
-        for j in range(len(MEMORY[i]) - 1):
-            temp_str += ","
-            temp_str += str(MEMORY[i][j + 1])
-        outputfile.write(temp_str + "\n")
     ### FINISH
     print("已结束本次录入")
-    outputfile.close()
+    
     DATABASE.commit()
     DATABASE.close()
     return 0
@@ -325,8 +305,12 @@ def MODE_MERGE():
         print("==请选择第", i + 1, "个文件的位置==")
         FILE_LIST.append(input())
     ## 开始逐个文件读取然后记录数据库
+    MEMORY = []
     for i in range(FILE_LIST):
-        print("文件记载到库里了")
+        print("接下来读第i个文件")
+        for j in range(1):
+            MEMORY.append(1)
+
     ## 合并输出文件，在这之前需要先排序
     ## 造一个comp函数，对多个结构体排序
     # TEMP = SWAP(A0, B0)
@@ -348,6 +332,27 @@ def MODE_MERGE():
     #     else:
     #         STU_NUMBER_FULL[i]=TEMPLETE_NULL
     # ## 然后STU_NUMBER_FULL就是拍好了可以输出的那个
+
+    ###### OUTPUT
+    ospath = os.path.join(os.path.expanduser("~"), "Desktop") + "\\test_score.csv"
+    outputfile = open(ospath, "w")
+    ### HEAD
+    temp_str_head = "\"学号\""
+    for i in range(len(MEMORY[0]) - 1):
+        temp_str_head += ",\"第"
+        temp_str_head += str(i + 1)
+        temp_str_head += "题\""
+    outputfile.write(temp_str_head + "\n")
+    del temp_str_head
+    ### BODY
+    for i in range(len(MEMORY)):
+        temp_str = str(MEMORY[i][0])
+        for j in range(len(MEMORY[i]) - 1):
+            temp_str += ","
+            temp_str += str(MEMORY[i][j + 1])
+        outputfile.write(temp_str + "\n")
+    outputfile.close()
+
     return -1
 
 
