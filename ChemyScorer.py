@@ -1,5 +1,6 @@
 ###### IMPORT
 import os
+import time
 import sqlite3
 
 ###### GLOBAL
@@ -23,6 +24,10 @@ def replaceX(src, A, B):
             print("In", src, "Find\"", A, "\"--->\"", B, "\"")
         src = src.replace(A, B)
     return src
+
+
+def getFormatedTime():
+    return time.strftime("%Y%m%d%H%M%S", time.localtime())
 
 
 ###### Database Operation
@@ -105,8 +110,7 @@ def MODE_CREATE():
     print("2.大小写敏感")
     GLOBAL_FORCE_REVIEW_TIME = input()
     STEP += 1
-    ## WRITE
-    DATABASE = sqlite3.connect(str(GLOBAL_TASK_NAME) + ".db")
+    ## PREPARE DATA
     SQL_init_BODY = "CREATE TABLE \"BODY\" (" \
                     "\"STU_NUMBER\" integer NOT NULL," \
                     "\"SCORE_LIST\" TEXT(255) NOT NULL," \
@@ -120,17 +124,26 @@ def MODE_CREATE():
                     "\"FORCE_REVIEW_MEMBER\" text(255)," \
                     "\"FORCE_REVIEW_TIME\" text(255)" \
                     ");"
-    PUSH(DATABASE, 0, SQL_init_BODY)
-    PUSH(DATABASE, 0, SQL_init_HEAD)
     DATA_LIST_INIT = []
     DATA_LIST_INIT.append([GLOBAL_TASK_NAME, "STRING"])
     DATA_LIST_INIT.append([GLOBAL_QUESION_NUM, "INT"])
     DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_MEMBER, "STRING"])
     DATA_LIST_INIT.append([GLOBAL_FORCE_REVIEW_TIME, "STRING"])
+    ## WRITE
+    TIME = 1
+    if TIME == 1:
+        DATABASE_NAME = str(GLOBAL_TASK_NAME) + "-" + getFormatedTime() + ".db"
+    else:
+        DATABASE_NAME = str(GLOBAL_TASK_NAME) + ".db"
+    DATABASE = sqlite3.connect(DATABASE_NAME)
+    PUSH(DATABASE, 0, SQL_init_BODY)
+    PUSH(DATABASE, 0, SQL_init_HEAD)
     PUSH(DATABASE, "HEAD", "", DATA_LIST_INIT)
     ## FINISH
     DATABASE.commit()
     DATABASE.close()
+    print("已创建考试文件：" + DATABASE_NAME)
+    print("您可将该文件下发给各录入员，并请他们各自改名")
     return 0
 
 
