@@ -368,7 +368,7 @@ def MODE_MERGE():
 
 ###### MAIN
 if __name__ == '__main__':
-    ARGUMENT_DICT = {}
+    ARGUMENT_DICT = {"MODE": "NULL"}
     STATUS = "VALUE"
     for i in range(len(sys.argv)):
         if STATUS == "NAME":
@@ -402,13 +402,29 @@ if __name__ == '__main__':
                 TEMP_RETURN = 0
                 print("EXIT")
                 break
-    elif ARGUMENT_DICT["mode"] == "GUI":
-        # top = tkinter.Tk()
-        # top.mainloop()
-        GLOBAL_MODE="GUI_0"
-        TEMP_RETURN=0
+    # elif ARGUMENT_DICT["mode"] == "GUI":
+    else:
+        GLOBAL_MODE = "GUI_0"
+        TEMP_RETURN = 0
         print("做梦？一边稍稍")
+        top = tkinter.Tk()
+        # top.overrideredirect(True) # 无边框需要自己实现最大最小化
+        # top.mainloop()
+        li = ['C', 'python', 'php', 'html', 'SQL', 'java']
+        movie = ['CSS', 'jQuery', 'Bootstrap']
+        listb = tkinter.Listbox(top)  # 创建两个列表组件
+        listb2 = tkinter.Listbox(top)
+        for item in li:  # 第一个小部件插入数据
+            listb.insert(0, item)
+
+        for item in movie:  # 第二个小部件插入数据
+            listb2.insert(0, item)
+
+        listb.pack()  # 将小部件放置到主窗口中
+        listb2.pack()
+        top.mainloop()
         # 图形化也应该使用函数调用机制对应到按钮上和接受报错返回
+
 # 这段异常退出分析是对GUI和CLI共用的
 if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
     print("退出原因：不存在的数量")
