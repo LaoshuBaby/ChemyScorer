@@ -406,35 +406,50 @@ if __name__ == '__main__':
     else:
         GLOBAL_MODE = "GUI_0"
         TEMP_RETURN = 0
-        print("做梦？一边稍稍")
-        #root = tkinter.Tk()
-        # top.overrideredirect(True) # 无边框需要自己实现最大最小化
 
-        # li = ['C', 'python', 'php', 'html', 'SQL', 'java']
-        # listb = tkinter.Listbox(top)  # 创建两个列表组件
-        # for item in li:  # 第一个小部件插入数据
-        #     listb.insert(0, item)
-        # listb.pack()  # 将小部件放置到主窗口中
 
-        # tkinter.Canvas(root, height=600, width=800)
-        # main_canvas=tkinter.Canvas(root, bg="red")
-        # main_canvas=tkinter.Canvas(root, bg="gray",height=450, width=800)
-        #
-        # main_canvas.create_rectangle(10,10,110,110)
-        # main_canvas.pack()
-        # root.mainloop()  # 最后再展示
         # 图形化也应该使用函数调用机制对应到按钮上和接受报错返回
 
-        WINDOW_W=800
-        WINDOW_H=450
-        ROOT=tkinter.Tk()
-        CANVAS=tkinter.Canvas(ROOT,
-                              width=WINDOW_W,
-                              height=WINDOW_H,
-                              bg="#66CCFF")
-        CANVAS.create_rectangle(10,20,30,70) #X1,Y1,X2,Y2
+        def hex2(num):
+            # this part from https://www.jb51.net/article/139206.htm
+            # will rewrite a RGB func in future
+            base = [str(x) for x in range(10)] + [chr(x) for x in range(ord('A'), ord('A') + 6)]
+            mid = []
+            while True:
+                if num == 0: break
+            num, rem = divmod(num, 16)
+            mid.append(base[rem])
+            return ''.join([str(x) for x in mid[::-1]])
+
+
+        def rgb(R, G, B):
+            import binascii
+            # R_STR = str(hex2(R)).replace("0x", "")
+            # G_STR = str(hex2(G)).replace("0x", "")
+            # B_STR = str(hex2(B)).replace("0x", "")
+            R_STR = str(hex(int(R,10))).replace("0x", "")
+            G_STR = str(hex(int(G,10))).replace("0x", "")
+            B_STR = str(hex(int(B,10))).replace("0x", "")
+            result=R_STR + G_STR + B_STR
+            print(result)
+            return result
+
+
+        # 预定义
+        WINDOW_W = 800
+        WINDOW_H = 450
+        # 创建环境
+        ROOT = tkinter.Tk()
+        CANVAS = tkinter.Canvas(ROOT,
+                                width=WINDOW_W,
+                                height=WINDOW_H,
+                                # bg="#66CCFF")
+                                bg=rgb(0, 83, 255))
+        # 开始绘图
+        CANVAS.create_rectangle(10, 20, 30, 70)  # X1,Y1,X2,Y2
+        # 绘图完成后封包展示进入循环
         CANVAS.pack()
-        ROOT.overrideredirect(True)
+        ROOT.overrideredirect(True)  # 无边框需要自己实现最大最小化
         ROOT.mainloop()
 
 # 这段异常退出分析是对GUI和CLI共用的
