@@ -407,23 +407,35 @@ if __name__ == '__main__':
         GLOBAL_MODE = "GUI_0"
         TEMP_RETURN = 0
         print("做梦？一边稍稍")
-        top = tkinter.Tk()
+        #root = tkinter.Tk()
         # top.overrideredirect(True) # 无边框需要自己实现最大最小化
-        # top.mainloop()
-        li = ['C', 'python', 'php', 'html', 'SQL', 'java']
-        movie = ['CSS', 'jQuery', 'Bootstrap']
-        listb = tkinter.Listbox(top)  # 创建两个列表组件
-        listb2 = tkinter.Listbox(top)
-        for item in li:  # 第一个小部件插入数据
-            listb.insert(0, item)
 
-        for item in movie:  # 第二个小部件插入数据
-            listb2.insert(0, item)
+        # li = ['C', 'python', 'php', 'html', 'SQL', 'java']
+        # listb = tkinter.Listbox(top)  # 创建两个列表组件
+        # for item in li:  # 第一个小部件插入数据
+        #     listb.insert(0, item)
+        # listb.pack()  # 将小部件放置到主窗口中
 
-        listb.pack()  # 将小部件放置到主窗口中
-        listb2.pack()
-        top.mainloop()
+        # tkinter.Canvas(root, height=600, width=800)
+        # main_canvas=tkinter.Canvas(root, bg="red")
+        # main_canvas=tkinter.Canvas(root, bg="gray",height=450, width=800)
+        #
+        # main_canvas.create_rectangle(10,10,110,110)
+        # main_canvas.pack()
+        # root.mainloop()  # 最后再展示
         # 图形化也应该使用函数调用机制对应到按钮上和接受报错返回
+
+        WINDOW_W=800
+        WINDOW_H=450
+        ROOT=tkinter.Tk()
+        CANVAS=tkinter.Canvas(ROOT,
+                              width=WINDOW_W,
+                              height=WINDOW_H,
+                              bg="#66CCFF")
+        CANVAS.create_rectangle(10,20,30,70) #X1,Y1,X2,Y2
+        CANVAS.pack()
+        ROOT.overrideredirect(True)
+        ROOT.mainloop()
 
 # 这段异常退出分析是对GUI和CLI共用的
 if GLOBAL_MODE == 1 and TEMP_RETURN == "ERROR_NONEXIST_QUANTITY":
