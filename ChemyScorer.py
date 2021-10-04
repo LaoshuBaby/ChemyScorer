@@ -410,27 +410,18 @@ if __name__ == '__main__':
 
         # 图形化也应该使用函数调用机制对应到按钮上和接受报错返回
 
-        def hex2(num):
-            # this part from https://www.jb51.net/article/139206.htm
-            # will rewrite a RGB func in future
-            base = [str(x) for x in range(10)] + [chr(x) for x in range(ord('A'), ord('A') + 6)]
-            mid = []
-            while True:
-                if num == 0: break
-            num, rem = divmod(num, 16)
-            mid.append(base[rem])
-            return ''.join([str(x) for x in mid[::-1]])
-
-
         def rgb(R, G, B):
             import binascii
-            # R_STR = str(hex2(R)).replace("0x", "")
-            # G_STR = str(hex2(G)).replace("0x", "")
-            # B_STR = str(hex2(B)).replace("0x", "")
-            R_STR = str(hex(int(R,10))).replace("0x", "")
-            G_STR = str(hex(int(G,10))).replace("0x", "")
-            B_STR = str(hex(int(B,10))).replace("0x", "")
-            result=R_STR + G_STR + B_STR
+            R_STR = str(hex(R)).replace("0x", "")
+            G_STR = str(hex(G)).replace("0x", "")
+            B_STR = str(hex(B)).replace("0x", "")
+            if len(R_STR) == 1:
+                R_STR = "0" + R_STR
+            if len(G_STR) == 1:
+                G_STR = "0" + G_STR
+            if len(B_STR) == 1:
+                B_STR = "0" + B_STR
+            result = "#" + R_STR + G_STR + B_STR
             print(result)
             return result
 
@@ -446,10 +437,12 @@ if __name__ == '__main__':
                                 # bg="#66CCFF")
                                 bg=rgb(0, 83, 255))
         # 开始绘图
-        CANVAS.create_rectangle(10, 20, 30, 70)  # X1,Y1,X2,Y2
+        CANVAS.create_rectangle(0, 0, WINDOW_W, int(WINDOW_H * 0.15))  # X1,Y1,X2,Y2
+        Button1 = tkinter.Button(ROOT, width=30, height=15)
+        Button1.pack()
         # 绘图完成后封包展示进入循环
         CANVAS.pack()
-        ROOT.overrideredirect(True)  # 无边框需要自己实现最大最小化
+        # ROOT.overrideredirect(True)  # 无边框需要自己实现最大最小化
         ROOT.mainloop()
 
 # 这段异常退出分析是对GUI和CLI共用的
